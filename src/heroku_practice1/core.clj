@@ -3,16 +3,17 @@
             [clojure.xml :as x]
             [environ.core :refer [env]]))
 
-(defn my-app ([req] {:status 200
-                         :headers {"Content-Type" "text/html"}
-                         :body (with-out-str
-                                 (x/emit-element {:tag :html
-                                                  :content [{:tag :body
-                                                             :content [{:tag :h2
-                                                                        :content ["Hello World!"]}
-                                                                       {:tag :p
-                                                                        :content ["This is a practice app!"]}]}]}))}))
+(def ^:private body {:status 200
+           :headers {"Content-Type" "text/html"}
+           :body (with-out-str
+                   (x/emit-element {:tag :html
+                                    :content [{:tag :body
+                                               :content [{:tag :h2
+                                                          :content ["Hello World!"]}
+                                                         {:tag :p
+                                                          :content ["This is a practice app!"]}]}]}))})
 
 (defn -main [& [port]]
-  (let [port (Integer. ^int (or port (env :port) 5000))]
+  (let [my-app (fn [req] body)
+        port (Integer. ^int (or port (env :port) 5000))]
     (http/run-server my-app {:port port :join? false})))
