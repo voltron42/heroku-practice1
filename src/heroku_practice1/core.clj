@@ -3,14 +3,16 @@
             [clojure.xml :as x]
             [environ.core :refer [env]]))
 
-(defn -main [& [port]]
-  (let [app (constantly {:status 200 
+(def my-app (constantly {:status 200
                          :headers "text/html"
-                         :body (x/emit-element {:tag :html
-                                                :content [{:tag :body
-                                                           :content [{:tag :h2
-                                                                      :content ["Hello World!"]}
-                                                                     {:tag :p
-                                                                      :content ["This is a practice app!"]}]}]})})
-        port (Integer. (or port (env :port) 5000))]
-    (http/run-server #'app {:port port :join? false})))
+                         :body (with-out-str
+                                 (x/emit-element {:tag :html
+                                                  :content [{:tag :body
+                                                             :content [{:tag :h2
+                                                                        :content ["Hello World!"]}
+                                                                       {:tag :p
+                                                                        :content ["This is a practice app!"]}]}]}))}))
+
+(defn -main [& [port]]
+  (let [port (Integer. ^int (or port (env :port) 5000))]
+    (http/run-server #'my-app {:port port :join? false})))
