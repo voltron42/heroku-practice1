@@ -3,8 +3,8 @@
             [clojure.xml :as x]
             [environ.core :refer [env]]))
 
-(def my-app (constantly {:status 200
-                         :headers "text/html"
+(defn my-app ([req] {:status 200
+                         :headers {"Content-Type" "text/html"}
                          :body (with-out-str
                                  (x/emit-element {:tag :html
                                                   :content [{:tag :body
@@ -15,4 +15,4 @@
 
 (defn -main [& [port]]
   (let [port (Integer. ^int (or port (env :port) 5000))]
-    (http/run-server #'my-app {:port port :join? false})))
+    (http/run-server my-app {:port port :join? false})))
